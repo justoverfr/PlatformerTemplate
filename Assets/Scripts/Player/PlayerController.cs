@@ -6,85 +6,122 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D _rigBod;
 
-    [SerializeField]
-    private LayerMask m_GroundLayer;
+    /* ------------------------------ Déplacements ------------------------------ */
+    [SerializeField] private float m_MoveSpeed = 8f;
+    private float _horizontalSpeed = 0f;
 
-    [SerializeField]
-    private float m_MoveSpeed;
+    /* ---------------------------------- Saut ---------------------------------- */
+    [SerializeField] private LayerMask m_GroundLayer;
+    [SerializeField] private float m_JumpForce = 16f;
+    private bool isFacingRight = true;
 
-    private Vector2 _moveVector = Vector2.zero;
+    /* ---------------------------------- Dash ---------------------------------- */
+    [SerializeField] private float m_DashForce = 24f;
+    [SerializeField] private float m_DashTime = 0.2f;
+    [SerializeField] private float m_GroundDashCooldown = 0.5f;
+    private bool _canDashOnGround = true;
+    private bool _canDashInAir = true;
+    private bool _isDashing = false;
 
-    [SerializeField]
-    private float m_MinJumpForce;
-
-    [SerializeField]
-    private float m_MaxJumpForce;
-
-    [SerializeField]
-    private float m_GravityScale = 1f;
-
-    // private float _movement;
-    private bool _isJumpButtonPressed;
+    // [SerializeField] private TrailRenderer tr;
 
     private void Awake()
     {
         _rigBod = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        // Déplacements horizontals
-        _moveVector = Vector2.right * Input.GetAxis("Horizontal") * m_MoveSpeed;
-        // Déplacements verticaux   
-        _moveVector.y = _rigBod.velocity.y;
+        if (_isDashing) return;
 
-        // Saut
-        if (Input.GetKeyDown(KeyCode.Space))
+        _horizontalSpeed = Input.GetAxis("Horizontal");
+
+        if (IsGrounded())
         {
-            if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+            if (Input.GetButtonDown("Jump"))
             {
-                _isJumpButtonPressed = true;
+                _rigBod.velocity = new Vector2(_rigBod.velocity.x, m_JumpForce);
+            }
+
+            _canDashInAir = true; // Après avoir touché le sol, on peut dasher à nouveau dans les airs
+        }
+
+        if (Input.GetButtonUp("Jump") && _rigBod.velocity.y > 0f)
+        {
+            _rigBod.velocity = new Vector2(_rigBod.velocity.x, _rigBod.velocity.y * 0.5f);
+        }
+
+        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            if ((IsGrounded() && _canDashOnGround) ||
+                (!IsGrounded() && _canDashInAir))
+            {
+                StartCoroutine(Dash());
             }
         }
 
-        _rigBod.velocity = _moveVector;
+        Flip();
     }
 
     private void FixedUpdate()
     {
-        // Quand le bouton saut est pressé, on applique une force verticale
-        if (_isJumpButtonPressed)
-        {
-            _moveVector.y = CalculateJumpImpulse();
-            _isJumpButtonPressed = false;
+        if (_isDashing) return;
 
-            // _rigBod.AddForce(Vector2.up * m_JumpForce, ForceMode2D.Impulse);
+        float _verticalSpeed = _rigBod.velocity.y;
+
+        if (_verticalSpeed < 0f && !IsGrounded())
+        {
+            _verticalSpeed += Physics2D.gravity.y * _rigBod.gravityScale * Time.deltaTime;
         }
 
-        if (_moveVector.y < -Mathf.Epsilon)
-        {
-            _moveVector.y += Physics2D.gravity.y * _rigBod.gravityScale * m_GravityScale * Time.deltaTime;
-        }
-        else if (_moveVector.y > Mathf.Epsilon && !Input.GetKey(KeyCode.Space))
-        {
-            _moveVector.y += Physics2D.gravity.y * _rigBod.gravityScale * m_MinJumpForce * Time.deltaTime;
-        }
+        _rigBod.velocity = new Vector2(_horizontalSpeed * m_MoveSpeed, _verticalSpeed);
+    }
 
-        // _rigBod.velocity = new Vector2(m_MoveSpeed * _movement, _rigBod.velocity.y);
+    private bool IsGrounded()
+    {
+        // return Physics2D.OverlapCircle(m_GroundDetector.position, 0.2f, m_groundLayer);
+        return Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer);
+    }
 
-        _rigBod.velocity = _moveVector;
+    private void Flip()
+    {
+        if (isFacingRight && _horizontalSpeed < 0f || !isFacingRight && _horizontalSpeed > 0f)
+        {
+            Vector3 localScale = transform.localScale;
+            isFacingRight = !isFacingRight;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+
+    private IEnumerator Dash()
+    {
+        _isDashing = true;
+        float originalGravity = _rigBod.gravityScale;
+        _rigBod.gravityScale = 0f;
+
+        _rigBod.velocity = new Vector2(transform.localScale.x * m_DashForce, 0f);
+        // tr.emitting = true;
+        yield return new WaitForSeconds(m_DashTime);
+        // tr.emitting = false;
+        _rigBod.gravityScale = originalGravity;
+        _isDashing = false;
+
+        if (IsGrounded())
+        {
+            _canDashOnGround = false;
+            yield return new WaitForSeconds(m_GroundDashCooldown);
+            _canDashOnGround = true;
+        }
+        else
+        {
+            _canDashInAir = false;
+        }
     }
 
     public void Stop()
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
         enabled = false;
-    }
-
-    public float CalculateJumpImpulse()
-    {
-        float jumpImpulse = Mathf.Sqrt(-2f * Physics2D.gravity.y * _rigBod.gravityScale * m_MaxJumpForce);
-        return jumpImpulse;
     }
 }
