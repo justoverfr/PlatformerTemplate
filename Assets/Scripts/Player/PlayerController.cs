@@ -10,13 +10,21 @@ public class PlayerController : MonoBehaviour
     private LayerMask m_GroundLayer;
 
     [SerializeField]
-    private float m_JumpForce;
-
-    [SerializeField]
     private float m_MoveSpeed;
 
-    private float _movement;
-    private bool _isJump;
+    private Vector2 _moveVector = Vector2.zero;
+
+    [SerializeField]
+    private float m_MinJumpForce;
+
+    [SerializeField]
+    private float m_MaxJumpForce;
+
+    [SerializeField]
+    private float m_GravityScale = 1f;
+
+    // private float _movement;
+    private bool _isJumpButtonPressed;
 
     private void Awake()
     {
@@ -26,32 +34,57 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+        // Déplacements horizontals
+        _moveVector = Vector2.right * Input.GetAxis("Horizontal") * m_MoveSpeed;
+        // Déplacements verticaux   
+        _moveVector.y = _rigBod.velocity.y;
+
+        // Saut
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
             {
-                _isJump = true;
+                _isJumpButtonPressed = true;
             }
         }
 
-        _movement = Input.GetAxis("Horizontal");
+        _rigBod.velocity = _moveVector;
     }
 
     private void FixedUpdate()
     {
-        if (_isJump)
+        // Quand le bouton saut est pressé, on applique une force verticale
+        if (_isJumpButtonPressed)
         {
-            _isJump = false;
+            _moveVector.y = CalculateJumpImpulse();
+            _isJumpButtonPressed = false;
 
-            _rigBod.AddForce(Vector2.up * m_JumpForce, ForceMode2D.Impulse);
+            // _rigBod.AddForce(Vector2.up * m_JumpForce, ForceMode2D.Impulse);
         }
 
-        _rigBod.velocity = new Vector2(m_MoveSpeed * _movement, _rigBod.velocity.y);
+        if (_moveVector.y < -Mathf.Epsilon)
+        {
+            _moveVector.y += Physics2D.gravity.y * _rigBod.gravityScale * m_GravityScale * Time.deltaTime;
+        }
+        else if (_moveVector.y > Mathf.Epsilon && !Input.GetKey(KeyCode.Space))
+        {
+            _moveVector.y += Physics2D.gravity.y * _rigBod.gravityScale * m_MinJumpForce * Time.deltaTime;
+        }
+
+        // _rigBod.velocity = new Vector2(m_MoveSpeed * _movement, _rigBod.velocity.y);
+
+        _rigBod.velocity = _moveVector;
     }
 
     public void Stop()
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
         enabled = false;
+    }
+
+    public float CalculateJumpImpulse()
+    {
+        float jumpImpulse = Mathf.Sqrt(-2f * Physics2D.gravity.y * _rigBod.gravityScale * m_MaxJumpForce);
+        return jumpImpulse;
     }
 }
