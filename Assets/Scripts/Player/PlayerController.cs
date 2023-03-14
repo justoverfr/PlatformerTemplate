@@ -23,6 +23,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float m_GravityScale = 1f;
 
+    [SerializeField]
+    private int m_JumpCount = 2;
+
+    public void JumpCount()
+    {
+        if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+        {
+            m_JumpCount = 2;
+        }
+    }
     // private float _movement;
     private bool _isJumpButtonPressed;
 
@@ -42,9 +52,17 @@ public class PlayerController : MonoBehaviour
         // Saut
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+            if (m_JumpCount > 0)
             {
                 _isJumpButtonPressed = true;
+                m_JumpCount--;
+            }
+            if (m_JumpCount <= 0) {
+                _isJumpButtonPressed = false;
+            }
+            if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+            {
+                m_JumpCount = 2;
             }
         }
 
