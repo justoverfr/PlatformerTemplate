@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
 
     /* ------------------------------ Déplacements ------------------------------ */
     [SerializeField] private float m_MoveSpeed = 8f;
-    private float _horizontalSpeed = 0f;
+    private float _horizontalSpeed;
+    private float _verticalSpeed;
 
     /* ---------------------------------- Saut ---------------------------------- */
     [SerializeField] private LayerMask m_GroundLayer;
@@ -24,18 +25,31 @@ public class PlayerController : MonoBehaviour
     private bool _canDashInAir = true;
     private bool _isDashing = false;
 
+    /* --------------------------------- Gravité -------------------------------- */
+    private Vector2 _gravityVector;
+    private bool _isGravityVertical;
+
     // [SerializeField] private TrailRenderer tr;
 
     private void Awake()
     {
         _rigBod = GetComponent<Rigidbody2D>();
+        _gravityVector = Physics2D.gravity.normalized;
     }
 
     private void Update()
     {
+        _gravityVector = Physics2D.gravity.normalized;
+        _isGravityVertical = _gravityVector.y != 0f;
+
+        /* -------------------------------- Contrôles ------------------------------- */
         if (_isDashing) return;
 
-        _horizontalSpeed = Input.GetAxis("Horizontal");
+        if (_isGravityVertical)
+            _horizontalSpeed = Input.GetAxis("Horizontal");
+        else
+            _verticalSpeed = Input.GetAxis("Vertical");
+        // _horizontalSpeed = Input.GetAxis("Horizontal");
 
         if (IsGrounded() && !Input.GetButton("Jump"))
         {
