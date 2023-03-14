@@ -41,6 +41,5 @@ sysinfo.txt
 Assets/StreamingAssets/crashlytics-build.properties
 
 # Customs
-*.meta
 *.log
 *.DS_Store
