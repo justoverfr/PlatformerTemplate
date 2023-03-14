@@ -48,6 +48,10 @@ public class PlayerController : MonoBehaviour
         _moveVector = Vector2.right * Input.GetAxis("Horizontal") * m_MoveSpeed;
         // Déplacements verticaux   
         _moveVector.y = _rigBod.velocity.y;
+        // Game Over si le joueur tombe
+        if (_moveVector.y <= -50){
+            FindObjectOfType<GameManager>().GameOver();
+        }
         // Reset double saut si le joueur touche le sol
         if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
         {
