@@ -42,3 +42,4 @@ Assets/StreamingAssets/crashlytics-build.properties
 
 *.meta
 *.log
+*.DS_Store
