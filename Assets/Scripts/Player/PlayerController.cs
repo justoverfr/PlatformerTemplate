@@ -48,7 +48,11 @@ public class PlayerController : MonoBehaviour
         _moveVector = Vector2.right * Input.GetAxis("Horizontal") * m_MoveSpeed;
         // Déplacements verticaux   
         _moveVector.y = _rigBod.velocity.y;
-
+        // Reset double saut si le joueur touche le sol
+        if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
+        {
+            m_JumpCount = 2;
+        }
         // Saut
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -59,10 +63,6 @@ public class PlayerController : MonoBehaviour
             }
             if (m_JumpCount <= 0) {
                 _isJumpButtonPressed = false;
-            }
-            if (Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer))
-            {
-                m_JumpCount = 2;
             }
         }
 
