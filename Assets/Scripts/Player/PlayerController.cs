@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D _rigBod;
+    private bool isFacingRight = true;
 
     /* ------------------------------ Déplacements ------------------------------ */
     [SerializeField] private float m_MoveSpeed = 8f;
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
     /* ---------------------------------- Saut ---------------------------------- */
     [SerializeField] private LayerMask m_GroundLayer;
     [SerializeField] private float m_JumpForce = 16f;
-    private bool isFacingRight = true;
+    bool _canDoubleJump = true;
 
     /* ---------------------------------- Dash ---------------------------------- */
     [SerializeField] private float m_DashForce = 24f;
@@ -36,14 +37,23 @@ public class PlayerController : MonoBehaviour
 
         _horizontalSpeed = Input.GetAxis("Horizontal");
 
-        if (IsGrounded())
+        if (IsGrounded() && !Input.GetButton("Jump"))
         {
-            if (Input.GetButtonDown("Jump"))
+            _canDoubleJump = true;
+            _canDashInAir = true;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (IsGrounded() || _canDoubleJump)
             {
                 _rigBod.velocity = new Vector2(_rigBod.velocity.x, m_JumpForce);
-            }
 
-            _canDashInAir = true; // Après avoir touché le sol, on peut dasher à nouveau dans les airs
+                if (!IsGrounded())
+                {
+                    _canDoubleJump = false;
+                }
+            }
         }
 
         if (Input.GetButtonUp("Jump") && _rigBod.velocity.y > 0f)
