@@ -268,7 +268,6 @@ MonoBehaviour:
   m_DashForce: 20
   m_DashTime: 0.2
   m_GroundDashCooldown: 0.5
-  _gravityDirection: {x: 0, y: 0}
 --- !u!114 &287877849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,7 +611,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1423,7 +1422,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 09ba878d66901c84ebf5cd6ecc96f81b, type: 3}
-  m_Color: {r: 0.7169812, g: 0.27285498, b: 0, a: 1}
+  m_Color: {r: 0.5849056, g: 0.1948038, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
