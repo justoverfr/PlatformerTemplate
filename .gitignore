@@ -40,6 +40,7 @@ sysinfo.txt
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties
 
+# Customs
 *.meta
 *.log
 *.DS_Store
