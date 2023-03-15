@@ -56,6 +56,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (_rigBod.velocity.magnitude >= 70f)
+        {
+            FindObjectOfType<GameManager>().GameOver();
+        }
+
         if (Input.GetButtonUp("Jump") && _rigBod.velocity.y > 0f)
         {
             _rigBod.velocity = new Vector2(_rigBod.velocity.x, _rigBod.velocity.y * 0.5f);
