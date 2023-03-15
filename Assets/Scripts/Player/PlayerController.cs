@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     /* ---------------------------------- Saut ---------------------------------- */
     [SerializeField] private LayerMask m_GroundLayer;
     [SerializeField] private float m_JumpForce = 16f;
+    bool _isJumpActive = true;
     bool _canDoubleJump = true;
 
     /* ---------------------------------- Dash ---------------------------------- */
@@ -43,7 +44,7 @@ public class PlayerController : MonoBehaviour
             _canDashInAir = true;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && _isJumpActive)
         {
             if (IsGrounded() || _canDoubleJump)
             {
@@ -138,5 +139,10 @@ public class PlayerController : MonoBehaviour
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
         enabled = false;
+    }
+
+    public void SetJumpStatus(bool jumpStatus)
+    {
+        _isJumpActive = jumpStatus;
     }
 }
