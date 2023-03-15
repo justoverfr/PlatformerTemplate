@@ -146,5 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4615e3496048747ac813dabeb3d518ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_canBePushed: 1
+  m_canBePushed: 0
   m_inversedGravity: 0
+  m_floatable: 0
+  m_KillCube: 0
