@@ -5,6 +5,7 @@ using UnityEngine;
 public class GravityController : MonoBehaviour
 {
     private float _gravityValue = 9.81f;
+    private bool _isGravityActive = true;
 
     [SerializeField] private float m_GravitySwitchCooldown = 0.5f;
     private float _nextGravitySwitch;
@@ -35,5 +36,10 @@ public class GravityController : MonoBehaviour
                 _nextGravitySwitch = Time.time + m_GravitySwitchCooldown;
             }
         }
+    }
+
+    public void SetGravityActive(bool gravityStatus)
+    {
+        _isGravityActive = gravityStatus;
     }
 }
