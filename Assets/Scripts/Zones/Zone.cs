@@ -7,6 +7,7 @@ public class Zone : MonoBehaviour
     [SerializeField] private bool m_isKillZone = false;
     [SerializeField] private bool m_isCubeKillZone = false;
     [SerializeField] private bool m_isAntiJumpZone = false;
+    [SerializeField] private bool m_isAntiDashZone = false;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +38,10 @@ public class Zone : MonoBehaviour
         {
             other.gameObject.GetComponent<PlayerController>().SetJumpStatus(false);
         }
+        if (other.gameObject.tag == "Player" && m_isAntiDashZone)
+        {
+            other.gameObject.GetComponent<PlayerController>().SetDashStatus(false);
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -44,6 +49,10 @@ public class Zone : MonoBehaviour
         if (other.gameObject.tag == "Player" && m_isAntiJumpZone)
         {
             other.gameObject.GetComponent<PlayerController>().SetJumpStatus(true);
+        }
+        if (other.gameObject.tag == "Player" && m_isAntiDashZone)
+        {
+            other.gameObject.GetComponent<PlayerController>().SetDashStatus(true);
         }
     }
 }

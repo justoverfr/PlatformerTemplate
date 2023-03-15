@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private bool _canDashOnGround = true;
     private bool _canDashInAir = true;
     private bool _isDashing = false;
+    private bool _isDashActive = true;
 
     // [SerializeField] private TrailRenderer tr;
 
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
             _rigBod.velocity = new Vector2(_rigBod.velocity.x, _rigBod.velocity.y * 0.5f);
         }
 
-        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift))
+        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift) && _isDashActive)
         {
             if ((IsGrounded() && _canDashOnGround) ||
                 (!IsGrounded() && _canDashInAir))
@@ -144,5 +145,9 @@ public class PlayerController : MonoBehaviour
     public void SetJumpStatus(bool jumpStatus)
     {
         _isJumpActive = jumpStatus;
+    }
+    public void SetDashStatus(bool dashStatus)
+    {
+        _isDashActive = dashStatus;
     }
 }
