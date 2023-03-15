@@ -13,15 +13,18 @@ public class BoxController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!m_canBePushed) {
+        if (!m_canBePushed)
+        {
             GetComponent<Rigidbody2D>().mass = 1000f;
         }
 
-        if (m_inversedGravity) {
+        if (m_inversedGravity)
+        {
             GetComponent<Rigidbody2D>().gravityScale *= -1f;
         }
 
-        if (m_floatable) {
+        if (m_floatable)
+        {
             GetComponent<Rigidbody2D>().gravityScale = 0f;
         }
     }
@@ -29,14 +32,16 @@ public class BoxController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
-    public void OnDeath() {
+    public void OnDeath()
+    {
         Destroy(this.gameObject);
     }
 
-    public bool IsKillCube() {
+    public bool IsKillCube()
+    {
         return m_KillCube;
     }
 }
