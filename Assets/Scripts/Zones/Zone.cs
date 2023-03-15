@@ -8,6 +8,7 @@ public class Zone : MonoBehaviour
     [SerializeField] private bool m_isCubeKillZone = false;
     [SerializeField] private bool m_isAntiJumpZone = false;
     [SerializeField] private bool m_isAntiDashZone = false;
+    [SerializeField] private bool m_isAntiGravityZone = false;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +43,10 @@ public class Zone : MonoBehaviour
         {
             other.gameObject.GetComponent<PlayerController>().SetDashStatus(false);
         }
+        if (other.gameObject.tag == "Player" && m_isAntiGravityZone)
+        {
+            other.gameObject.GetComponent<GravityController>().SetGravityActive(false);
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -53,6 +58,10 @@ public class Zone : MonoBehaviour
         if (other.gameObject.tag == "Player" && m_isAntiDashZone)
         {
             other.gameObject.GetComponent<PlayerController>().SetDashStatus(true);
+        }
+        if (other.gameObject.tag == "Player" && m_isAntiGravityZone)
+        {
+            other.gameObject.GetComponent<GravityController>().SetGravityActive(true);
         }
     }
 }
