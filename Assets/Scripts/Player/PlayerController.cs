@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     /* ---------------------------------- Saut ---------------------------------- */
     [SerializeField] private LayerMask m_GroundLayer;
     [SerializeField] private float m_JumpForce = 16f;
+    bool _isJumpActive = true;
     bool _canDoubleJump = true;
 
     /* ---------------------------------- Dash ---------------------------------- */
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private bool _canDashOnGround = true;
     private bool _canDashInAir = true;
     private bool _isDashing = false;
+    private bool _isDashActive = true;
 
     /* --------------------------------- Gravité -------------------------------- */
     private Vector2 _gravityVector;
@@ -42,6 +44,11 @@ public class PlayerController : MonoBehaviour
     {
         _gravityVector = Physics2D.gravity.normalized;
         _isGravityVertical = _gravityVector.y != 0f;
+
+        if (_rigBod.velocity.magnitude >= 70f)
+        {
+            FindObjectOfType<GameManager>().GameOver();
+        }
 
         /* -------------------------------- Contrôles ------------------------------- */
         if (_isDashing) return;
@@ -62,7 +69,7 @@ public class PlayerController : MonoBehaviour
             _verticalSpeed = Input.GetAxis("Vertical") * m_MoveSpeed;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && _isJumpActive)
         {
             if (IsGrounded() || _canDoubleJump)
             {
@@ -101,8 +108,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        /* ---------------------------------- Dash ---------------------------------- */
-        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift))
+        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift) && _isDashActive)
         {
             if ((IsGrounded() && _canDashOnGround) ||
                 (!IsGrounded() && _canDashInAir))
@@ -201,5 +207,14 @@ public class PlayerController : MonoBehaviour
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
         this.enabled = false;
+    }
+
+    public void SetJumpStatus(bool jumpStatus)
+    {
+        _isJumpActive = jumpStatus;
+    }
+    public void SetDashStatus(bool dashStatus)
+    {
+        _isDashActive = dashStatus;
     }
 }
