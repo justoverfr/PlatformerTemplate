@@ -29,18 +29,18 @@ public class ButtonPress : MonoBehaviour
             _button.GetButtonType() == "Both")
         {
             _pressurePlateSprite.enabled = false;
-
             _button.OnButtonPressed();
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (_button.IsSinglePress()) return;
+
         if (other.gameObject.tag == _button.GetButtonType() ||
             _button.GetButtonType() == "Both")
         {
             _pressurePlateSprite.enabled = true;
-
             _button.OnButtonReleased();
         }
     }
