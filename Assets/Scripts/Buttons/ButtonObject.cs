@@ -29,6 +29,8 @@ public class ButtonObject : MonoBehaviour
         _plateUpSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
         _plateDownSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
         _baseSprite = transform.GetChild(2).GetComponent<SpriteRenderer>();
+
+        SetColors();
     }
 
     // Update is called once per frame
