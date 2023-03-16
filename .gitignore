@@ -43,3 +43,4 @@ Assets/StreamingAssets/crashlytics-build.properties
 # Customs
 *.log
 *.DS_Store
+[Uu]ser[Ss]ettings/
