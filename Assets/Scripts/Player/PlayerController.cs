@@ -202,6 +202,11 @@ public class PlayerController : MonoBehaviour
         this.enabled = false;
     }
 
+    public bool IsDashing()
+    {
+        return _isDashing;
+    }
+
     public void SetJumpStatus(bool jumpStatus)
     {
         _isJumpActive = jumpStatus;
