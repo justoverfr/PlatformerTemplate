@@ -45,11 +45,6 @@ public class PlayerController : MonoBehaviour
         _gravityVector = Physics2D.gravity.normalized;
         _isGravityVertical = _gravityVector.y != 0f;
 
-        if (_rigBod.velocity.magnitude >= 70f)
-        {
-            FindObjectOfType<GameManager>().GameOver();
-        }
-
         /* -------------------------------- Contrôles ------------------------------- */
         if (_isDashing) return;
 
@@ -207,6 +202,10 @@ public class PlayerController : MonoBehaviour
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
         this.enabled = false;
+    }
+
+    public bool IsDashing(){
+        return _isDashing;
     }
 
     public void SetJumpStatus(bool jumpStatus)
