@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8691702437600805565}
   - component: {fileID: 8691702437600805566}
   - component: {fileID: 464886073469306857}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: AntiJumpZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3500016594297174169}
   - component: {fileID: 3500016594297174170}
   - component: {fileID: 5656016143609232845}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: CubeKillZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -23,6 +23,7 @@ public class GravityController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!_isGravityActive) return;
 
         if (Time.time < _nextGravitySwitch) return;
 
@@ -43,7 +44,4 @@ public class GravityController : MonoBehaviour
         _isGravityActive = gravityStatus;
     }
 
-    public void SetGravityActive(bool gravityStatus) {
-        _isGravityActive = gravityStatus;
-    }
 }
