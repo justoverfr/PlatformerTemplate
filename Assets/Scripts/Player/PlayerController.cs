@@ -5,15 +5,19 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D _rigBod;
+    private bool isFacingRight = true;
 
     /* ------------------------------ Déplacements ------------------------------ */
     [SerializeField] private float m_MoveSpeed = 8f;
-    private float _horizontalSpeed = 0f;
+    private float _horizontalSpeed;
+    private float _verticalSpeed;
+    private Vector2 _moveVector = Vector2.zero;
 
     /* ---------------------------------- Saut ---------------------------------- */
     [SerializeField] private LayerMask m_GroundLayer;
     [SerializeField] private float m_JumpForce = 16f;
-    private bool isFacingRight = true;
+    bool _isJumpActive = true;
+    bool _canDoubleJump = true;
 
     /* ---------------------------------- Dash ---------------------------------- */
     [SerializeField] private float m_DashForce = 24f;
@@ -22,36 +26,84 @@ public class PlayerController : MonoBehaviour
     private bool _canDashOnGround = true;
     private bool _canDashInAir = true;
     private bool _isDashing = false;
+    private bool _isDashActive = true;
+
+    /* --------------------------------- Gravité -------------------------------- */
+    private Vector2 _gravityVector;
+    private bool _isGravityVertical;
 
     // [SerializeField] private TrailRenderer tr;
 
     private void Awake()
     {
         _rigBod = GetComponent<Rigidbody2D>();
+        _gravityVector = Physics2D.gravity.normalized;
     }
 
     private void Update()
     {
+        _gravityVector = Physics2D.gravity.normalized;
+        _isGravityVertical = _gravityVector.y != 0f;
+
+        /* -------------------------------- Contrôles ------------------------------- */
         if (_isDashing) return;
 
-        _horizontalSpeed = Input.GetAxis("Horizontal");
-
-        if (IsGrounded())
+        if (IsGrounded() && !Input.GetButton("Jump"))
         {
-            if (Input.GetButtonDown("Jump"))
+            _canDoubleJump = true;
+            _canDashInAir = true;
+        }
+
+        /* ------------------------------ Déplacements ------------------------------ */
+        if (_isGravityVertical)
+        {
+            _horizontalSpeed = Input.GetAxis("Horizontal") * m_MoveSpeed;
+        }
+        else
+        {
+            _verticalSpeed = Input.GetAxis("Vertical") * m_MoveSpeed;
+        }
+
+        if (Input.GetButtonDown("Jump") && _isJumpActive)
+        {
+            if (IsGrounded() || _canDoubleJump)
             {
-                _rigBod.velocity = new Vector2(_rigBod.velocity.x, m_JumpForce);
+                if (_isGravityVertical)
+                {
+                    _rigBod.velocity = new Vector2(_rigBod.velocity.x, m_JumpForce * -_gravityVector.y);
+                }
+                else
+                {
+                    _rigBod.velocity = new Vector2(m_JumpForce * -_gravityVector.x, _rigBod.velocity.y);
+                }
+
+                if (!IsGrounded())
+                {
+                    _canDoubleJump = false;
+                }
             }
-
-            _canDashInAir = true; // Après avoir touché le sol, on peut dasher à nouveau dans les airs
         }
 
-        if (Input.GetButtonUp("Jump") && _rigBod.velocity.y > 0f)
+        /* ---------------------------------- Saut ---------------------------------- */
+        if (Input.GetButtonUp("Jump"))
         {
-            _rigBod.velocity = new Vector2(_rigBod.velocity.x, _rigBod.velocity.y * 0.5f);
+            if (_isGravityVertical)
+            {
+                if (Mathf.Sign(_rigBod.velocity.y) == Mathf.Sign(-_gravityVector.y))
+                {
+                    _rigBod.velocity = new Vector2(_rigBod.velocity.x, _rigBod.velocity.y * 0.5f);
+                }
+            }
+            else
+            {
+                if (Mathf.Sign(_rigBod.velocity.x) == Mathf.Sign(-_gravityVector.x))
+                {
+                    _rigBod.velocity = new Vector2(_rigBod.velocity.x * 0.5f, _rigBod.velocity.y);
+                }
+            }
         }
 
-        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift))
+        if (_canDashOnGround && Input.GetKeyDown(KeyCode.LeftShift) && _isDashActive)
         {
             if ((IsGrounded() && _canDashOnGround) ||
                 (!IsGrounded() && _canDashInAir))
@@ -67,20 +119,33 @@ public class PlayerController : MonoBehaviour
     {
         if (_isDashing) return;
 
-        float _verticalSpeed = _rigBod.velocity.y;
-
-        if (_verticalSpeed < 0f && !IsGrounded())
+        /* ----------------------------- Gestion gravité ---------------------------- */
+        if (_isGravityVertical)
         {
-            _verticalSpeed += Physics2D.gravity.y * _rigBod.gravityScale * Time.deltaTime;
+            _verticalSpeed = _rigBod.velocity.y;
+
+            if (Mathf.Sign(_verticalSpeed) == Mathf.Sign(_gravityVector.y) && !IsGrounded())
+            {
+                _verticalSpeed += Physics2D.gravity.y * _rigBod.gravityScale * Time.deltaTime;
+            }
+        }
+        else
+        {
+            _horizontalSpeed = _rigBod.velocity.x;
+
+            if (Mathf.Sign(_horizontalSpeed) == Mathf.Sign(_gravityVector.x) && !IsGrounded())
+            {
+                _horizontalSpeed += Physics2D.gravity.x * _rigBod.gravityScale * Time.deltaTime;
+            }
         }
 
-        _rigBod.velocity = new Vector2(_horizontalSpeed * m_MoveSpeed, _verticalSpeed);
+        _rigBod.velocity = new Vector2(_horizontalSpeed, _verticalSpeed);
     }
 
     private bool IsGrounded()
     {
         // return Physics2D.OverlapCircle(m_GroundDetector.position, 0.2f, m_groundLayer);
-        return Physics2D.Raycast(transform.position, Vector2.down, 1f, m_GroundLayer);
+        return Physics2D.Raycast(transform.position, _gravityVector, 1f, m_GroundLayer);
     }
 
     private void Flip()
@@ -96,11 +161,25 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator Dash()
     {
+        if (_isGravityVertical)
+        {
+            if (Mathf.Abs(_horizontalSpeed) < Mathf.Epsilon) yield break;
+
+            _horizontalSpeed = Mathf.Sign(_horizontalSpeed) * m_DashForce;
+            _rigBod.velocity = new Vector2(_horizontalSpeed, 0f);
+        }
+        else
+        {
+            if (Mathf.Abs(_verticalSpeed) < Mathf.Epsilon) yield break;
+
+            _verticalSpeed = Mathf.Sign(_verticalSpeed) * m_DashForce;
+            _rigBod.velocity = new Vector2(0f, _verticalSpeed);
+        }
+
         _isDashing = true;
         float originalGravity = _rigBod.gravityScale;
         _rigBod.gravityScale = 0f;
 
-        _rigBod.velocity = new Vector2(transform.localScale.x * m_DashForce, 0f);
         // tr.emitting = true;
         yield return new WaitForSeconds(m_DashTime);
         // tr.emitting = false;
@@ -122,6 +201,19 @@ public class PlayerController : MonoBehaviour
     public void Stop()
     {
         _rigBod.velocity = new Vector2(0, _rigBod.velocity.y);
-        enabled = false;
+        this.enabled = false;
+    }
+
+    public bool IsDashing(){
+        return _isDashing;
+    }
+
+    public void SetJumpStatus(bool jumpStatus)
+    {
+        _isJumpActive = jumpStatus;
+    }
+    public void SetDashStatus(bool dashStatus)
+    {
+        _isDashActive = dashStatus;
     }
 }
