@@ -38,18 +38,11 @@ public class PlayerController : MonoBehaviour
     {
         _rigBod = GetComponent<Rigidbody2D>();
         _gravityVector = Physics2D.gravity.normalized;
+        UpdateGravityVector();
     }
 
     private void Update()
     {
-        _gravityVector = Physics2D.gravity.normalized;
-        _isGravityVertical = _gravityVector.y != 0f;
-
-        if (_rigBod.velocity.magnitude >= 70f)
-        {
-            FindObjectOfType<GameManager>().GameOver();
-        }
-
         /* -------------------------------- Contrôles ------------------------------- */
         if (_isDashing) return;
 
@@ -216,5 +209,11 @@ public class PlayerController : MonoBehaviour
     public void SetDashStatus(bool dashStatus)
     {
         _isDashActive = dashStatus;
+    }
+
+    public void UpdateGravityVector()
+    {
+        _gravityVector = Physics2D.gravity.normalized;
+        _isGravityVertical = _gravityVector.y != 0f;
     }
 }
