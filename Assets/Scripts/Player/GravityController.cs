@@ -34,6 +34,7 @@ public class GravityController : MonoBehaviour
             {
                 Physics2D.gravity = _gravityVectors[i];
                 _nextGravitySwitch = Time.time + m_GravitySwitchCooldown;
+                this.GetComponent<PlayerController>().UpdateGravityVector();
             }
         }
     }
