@@ -7,9 +7,20 @@ public class BoxController : MonoBehaviour
     Rigidbody2D _rigBod;
 
     [SerializeField] private bool m_CanBePushed = true;
-    [SerializeField] private bool m_HasInversedGravity = false;
-    [SerializeField] private bool m_IsFloating = false;
     [SerializeField] private bool m_IsCompanion = false;
+
+    enum GravityType
+    {
+        Normal,
+        SingleDirection,
+        Inversed,
+        Floating
+    }
+
+    [SerializeField] private GravityType m_GravityType;
+
+    // [SerializeField] private bool m_HasInversedGravity = false;
+    // [SerializeField] private bool m_IsFloating = false;
 
 
     // Start is called before the first frame update
@@ -22,12 +33,13 @@ public class BoxController : MonoBehaviour
             _rigBod.mass = 1000f;
         }
 
-        if (m_HasInversedGravity)
+        if (m_GravityType == GravityType.Inversed)
         {
             _rigBod.gravityScale *= -1f;
         }
 
-        if (m_IsFloating)
+        if (m_GravityType == GravityType.Floating ||
+            m_GravityType == GravityType.SingleDirection)
         {
             _rigBod.gravityScale = 0f;
         }
@@ -37,6 +49,14 @@ public class BoxController : MonoBehaviour
     void Update()
     {
 
+    }
+
+    void FixedUpdate()
+    {
+        if (m_GravityType == GravityType.SingleDirection)
+        {
+            _rigBod.AddForce(Vector2.down * 9.81f);
+        }
     }
 
 
