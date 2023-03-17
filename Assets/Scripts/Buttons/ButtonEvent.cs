@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,7 @@ public class ButtonEvent : MonoBehaviour
 
         foreach (ButtonObject button in buttonsList)
         {
-            if (button.GetTarget() == this.gameObject)
+            if (Array.IndexOf(button.GetTargets(), this.gameObject) != -1)
             {
                 _buttonsCount++;
             }

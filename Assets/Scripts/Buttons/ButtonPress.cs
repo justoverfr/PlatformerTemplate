@@ -13,8 +13,7 @@ public class ButtonPress : MonoBehaviour
     {
         _button = GetComponentInParent<ButtonObject>();
 
-        _pressurePlate = GameObject.Find("PressurePlate");
-        _pressurePlateSprite = _pressurePlate.GetComponent<SpriteRenderer>();
+        _pressurePlateSprite = this.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame

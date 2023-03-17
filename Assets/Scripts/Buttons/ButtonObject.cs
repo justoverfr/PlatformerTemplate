@@ -7,6 +7,8 @@ public class ButtonObject : MonoBehaviour
     [SerializeField] private GameObject m_Target;
     [SerializeField] private bool m_SinglePress = false;
 
+    [SerializeField] private GameObject[] m_Targets;
+
     private SpriteRenderer _plateUpSprite;
     private SpriteRenderer _plateDownSprite;
     private SpriteRenderer _baseSprite;
@@ -41,12 +43,23 @@ public class ButtonObject : MonoBehaviour
 
     public void OnButtonPressed()
     {
-        m_Target.GetComponent<ButtonEvent>().AddButtonPressed();
+        // m_Target.GetComponent<ButtonEvent>().AddButtonPressed();
+
+        foreach (GameObject target in m_Targets)
+        {
+            target.GetComponent<ButtonEvent>().AddButtonPressed();
+            Debug.Log("Button pressed");
+        }
     }
 
     public void OnButtonReleased()
     {
-        m_Target.GetComponent<ButtonEvent>().RemoveButtonPressed();
+        // m_Target.GetComponent<ButtonEvent>().RemoveButtonPressed();
+
+        foreach (GameObject target in m_Targets)
+        {
+            target.GetComponent<ButtonEvent>().RemoveButtonPressed();
+        }
     }
 
     private void SetColors()
@@ -86,9 +99,9 @@ public class ButtonObject : MonoBehaviour
         }
     }
 
-    public GameObject GetTarget()
+    public GameObject[] GetTargets()
     {
-        return m_Target;
+        return m_Targets;
     }
 
     public string GetButtonType()
