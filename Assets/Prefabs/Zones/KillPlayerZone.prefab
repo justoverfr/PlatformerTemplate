@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8295471947055425728}
   - component: {fileID: 8295471947055425731}
   - component: {fileID: 1005382383916625300}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: KillPlayerZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

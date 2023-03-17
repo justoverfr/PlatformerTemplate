@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4367509200568998677}
   - component: {fileID: 4367509200568998678}
   - component: {fileID: 4787388256215342657}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: AntiGravityZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}

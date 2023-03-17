@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3993677383564576619}
   - component: {fileID: 3993677383564576616}
   - component: {fileID: 5296477599287804479}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: AntiDashZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
