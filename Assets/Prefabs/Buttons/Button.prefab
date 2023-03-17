@@ -394,5 +394,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Target: {fileID: 0}
-  m_SinglePress: 1
-  m_ButtonType: 0
+  m_SinglePress: 0
+  m_ButtonType: 2

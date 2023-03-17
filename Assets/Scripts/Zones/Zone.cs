@@ -13,13 +13,13 @@ public class Zone : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -31,7 +31,8 @@ public class Zone : MonoBehaviour
 
         if (other.gameObject.tag == "Cube" && m_isCubeKillZone)
         {
-            if (other.GetComponent<BoxController>().IsKillCube()) {
+            if (other.GetComponent<BoxController>().IsCompanion())
+            {
                 other.gameObject.GetComponent<BoxController>().OnDeath();
             }
         }
